@@ -5,6 +5,8 @@
 Good starting point: https://www.spinnaker.io/guides/tutorials/codelabs/hello-deployment/
 ***
 
+To start with I have been using Spinnaker for nearly 3 years.
+
 **Run halyard:**
 
 
