@@ -1,0 +1,40 @@
+{
+  "kind": "PersistentVolume",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "halyard-pv-nfs"
+  },
+  "spec": {
+    "capacity": {
+      "storage": "2Gi"
+    },
+    "nfs": {
+      "server": "archivevs1.tomarv2.com",
+      "path": "/k8s/halyard"
+    },
+    "accessModes": [
+      "ReadWriteMany"
+    ],
+    "persistentVolumeReclaimPolicy": "Retain"
+  }
+}
+
+{
+  "kind": "PersistentVolumeClaim",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "halyard-pvc",
+    "namespace": "sharedservices"
+  },
+  "spec": {
+    "accessModes": [
+      "ReadWriteOnce"
+    ],
+    "resources": {
+      "requests": {
+        "storage": "2Gi"
+      }
+    },
+    "volumeName": "halyard-pv-nfs"
+  }
+}

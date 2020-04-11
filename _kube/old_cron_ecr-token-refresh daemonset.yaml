@@ -1,0 +1,30 @@
+---
+apiVersion: batch/v2alpha1
+kind: CronJob
+metadata:
+  name: ecr-token-updater
+  namespace: sharedservices
+spec:
+  schedule: "* */6 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: ecr-token-updater
+            image: tomarv2/devops/hyperkube:v1.9.3
+            command:
+            - "/bin/sh"
+            - "-c"
+            - >
+              for i in `kubectl get pods -n sharedservices|grep ecr-token-refresh|cut -f1 -d ' ' `; do kubectl delete pod $i -n sharedservices; done
+            volumeMounts:
+            - name: kubectl-config
+              mountPath: /root/.kube
+          restartPolicy: Never
+          volumes:
+            - name: kubectl-config
+              secretName:
+                name: kubectl-config

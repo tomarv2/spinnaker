@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: dataengr
+  name: manual-ecr-token-updater
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: manual-ecr-token-updater
+    spec:
+      volumes:
+      - name: ecr-token-updater-script
+        configMap:
+          name: ecr-token-updater-script
+      containers:
+      - name: manual-ecr-token-updater
+        image: tomarv2/devops/aws-jq-kubectl:0.0.1
+        env:
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: ecr_access_key_id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: ecr_secret_access_key
+        command:
+        - /bin/sh
+        - -c
+        - >
+          mkdir -p /root/.aws;
+          touch /root/.aws/credentials;
+          echo "[default]" > /root/.aws/credentials;
+          cat /root/.aws/credentials;
+          /ecr/update-ecr-tokens.sh;
+          sleep 3600
+        volumeMounts:
+        - name: ecr-token-updater-script
+          mountPath: "/ecr"
+          readOnly: true

@@ -1,0 +1,57 @@
+apiVersion: apps/v1beta2
+kind: DaemonSet
+metadata:
+  name: ecr-token-refresh
+  namespace: sharedservices
+  labels:
+    k8s-app: ecr-token-refresh
+spec:
+  selector:
+    matchLabels:
+      name: ecr-token-refresh
+  template:
+    metadata:
+      labels:
+        name: ecr-token-refresh
+    spec:
+      containers:
+      - name: ecr-token-refresh
+        image: tomarv2/devops/aws-jq-kubectl:0.0.1
+        env:
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: ecr_access_key_id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: ecr_secret_access_key
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |-
+            mkdir -p /root/.aws
+            touch /root/.aws/credentials
+            echo "[default]" > /root/.aws/credentials
+            echo "aws_access_key_id = `printenv|grep AWS_ACCESS_KEY_ID|cut -f2 -d '='`" >> /root/.aws/credentials
+            echo "aws_secret_access_key = `printenv|grep AWS_SECRET_ACCESS_KEY|cut -f2 -d '='`" >> /root/.aws/credentials
+            if [ ! -f /root/.docker/config.json ]; then touch /root/.docker/config.json; fi
+            aws ecr get-authorization-token --registry-ids=1234567890 --region us-west-2 > /root/.docker/config.json
+            tail -f /dev/null
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: docker-config
+          mountPath: /root/.docker
+          readOnly: false
+      volumes:
+      - name: docker-config
+        hostPath:
+          path: /root/.docker

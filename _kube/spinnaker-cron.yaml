@@ -1,0 +1,47 @@
+---
+apiVersion: batch/v2alpha1
+kind: CronJob
+metadata:
+  name: ecr-token-updater
+  namespace: spinnaker
+spec:
+  schedule: "*/12 * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+          - name: ecr-token-updater-script
+            configMap:
+              name: ecr-token-updater-script
+              defaultMode: 0755
+          containers:
+          - name: ecr-token-updater
+            image: tomarv2/devops/aws-jq-kubectl:0.0.1
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: ecr_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: ecr_secret_access_key
+            command:
+            - /bin/sh
+            - -c
+            - >
+              mkdir -p /root/.aws;
+              touch /root/.aws/credentials;
+              echo "[default]" > /root/.aws/credentials;
+              cat /root/.aws/credentials;
+              /ecr/update-ecr-tokens.sh
+            volumeMounts:
+            - name: ecr-token-updater-script
+              mountPath: "/ecr"
+              readOnly: true
+          restartPolicy: Never

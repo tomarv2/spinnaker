@@ -1,0 +1,59 @@
+apiVersion: batch/v2alpha1
+kind: CronJob
+metadata:
+  annotations:
+  name: manual-ecr-token-refresh
+  namespace: sharedservices
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - image: tomarv2/devops/aws-jq-kubectl:0.0.1
+            name: manual-ecr-token-refresh
+            env:
+            - name: AWS_DEFAULT_REGION
+              value: us-west-2
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: ecr_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: ecr_secret_access_key
+            volumeMounts:
+              - name: kubectl-config
+                mountPath: "/root/.kube/config"
+                subPath: config
+              - name: ecr-token-config
+                mountPath: "/tmp/update-ecr-tokens.sh"
+                subPath: update-ecr-tokens.sh
+            command:
+            - /bin/sh
+            - -c
+            - |-
+              set -x
+              apk add jq 
+              ls -ld /tmp/update-ecr-tokens.sh
+              chmod +x /tmp/update-ecr-tokens.sh
+              cat /tmp/update-ecr-tokens.sh
+              sh /tmp/update-ecr-tokens.sh
+          volumes:
+          - name: kubectl-config
+            secret:
+              secretName: kubectl-config
+              items:
+              - key: config
+                path: config
+          - name: ecr-token-config
+            configMap: 
+              name: ecr-token-updater-script
+              items:
+              - key: update-ecr-tokens.sh
+                path: update-ecr-tokens.sh
+          restartPolicy: Never
+  schedule:  38 * * * *

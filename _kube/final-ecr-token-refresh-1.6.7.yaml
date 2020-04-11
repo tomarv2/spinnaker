@@ -1,0 +1,54 @@
+apiVersion: batch/v2alpha1
+kind: CronJob
+metadata:
+  annotations:
+  name: aws-ecr-token-refresh
+  namespace: spinnaker
+spec:
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+          - image: tomarv2/devops/aws-jq-kubectl:0.0.1
+            imagePullPolicy: IfNotPresent
+            name: ecr-token-refresh
+            env:
+            - name: AWS_DEFAULT_REGION
+              value: us-west-2
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: ecr_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: ecr_secret_access_key
+            command:
+            - /bin/sh
+            - -c
+            - |-
+              ACCOUNT=1234567890
+              REGION=us-west-2
+              SECRET_NAME=aws-ecr-registry
+              EMAIL=anymail.doesnt.matter@email.com
+              echo "get token..."
+              TOKEN=`aws ecr get-login --region ${REGION} --registry-ids ${ACCOUNT} | cut -d' ' -f6`
+              echo "ENV variables setup done."
+              kubectl delete secret --ignore-not-found $SECRET_NAME
+              kubectl create secret docker-registry $SECRET_NAME \
+              --docker-server=https://${ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com \
+              --docker-username=AWS \
+              --docker-password="${TOKEN}" \
+              --docker-email="${EMAIL}"
+              echo "Secret created by name. $SECRET_NAME"
+              echo "All done."
+              sleep  36000
+          restartPolicy: Never
+  schedule: 0 */10 * * *

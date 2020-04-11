@@ -1,0 +1,63 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ecr-token-updater-script
+  namespace: sharedservices
+data:
+  update-ecr-tokens.sh: |-
+    #!/bin/sh
+    set -ex
+    POD_NAME=$(kubectl get pods -n spinnaker --selector=cluster=spin-clouddriver -o json  | jq -r '.items[] | [.metadata.name] | sort[]' | tail -1);
+    echo pod_name
+    echo $POD_NAME
+    function setPassword {
+      echo "get secret key name"
+      kubectl exec $POD_NAME -c spin-clouddriver -n spinnaker -- cat /opt/spinnaker/config/clouddriver.yml | grep -e "passwordFile.*${1}.*" -o | awk -F "/" '{print $NF}'
+      SECRET_FIELD_NAME=$(kubectl exec $POD_NAME -c spin-clouddriver -n spinnaker -- cat /opt/spinnaker/config/clouddriver.yml | grep -e "passwordFile.*${1}.*" -o | awk -F "/" '{print $NF}');
+      echo secret_field_name
+      echo $SECRET_FIELD_NAME
+      if [ -z ${5+x} ]; then
+        ECR_PASSWORD=$(aws ecr get-authorization-token --registry-ids=${2} --region ${4} --output text --query 'authorizationData[].authorizationToken' | base64 -d | cut -d: -f2 | base64 | tr -d ' \t\n\r\f');
+        echo ecr_password
+        echo $ECR_PASSWORD
+      else
+        SESSION=$(aws sts assume-role --role-arn ${5} --role-session-name ecr-shared-access --query 'Credentials');
+        echo session
+        echo $SESSION
+        #SECRET_ACCESS_KEY=$(echo $SESSION | jq -r '.SecretAccessKey');
+        #ACCESS_KEY_ID=$(echo $SESSION | jq -r '.AccessKeyId');
+        SECRET_ACCESS_KEY="######"; ### PUT RIGHT KEYS
+        ACCESS_KEY_ID="AKIAIC46LOA3XXJL3G4A"; ### PUT RIGHT KEYS
+        SESSION_TOKEN=$(echo $SESSION | jq -r '.SessionToken');
+        echo session_token
+        echo $SESSION_TOKEN
+        ECR_PASSWORD=$(AWS_SESSION_TOKEN=$SESSION_TOKEN AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY aws ecr get-authorization-token --registry-ids=${2} --region ${4} --output text --query 'authorizationData[].authorizationToken' | base64 -D | cut -d: -f2 | base64 | tr -d ' \t\n\r\f');
+        echo password
+        echo $ECR_PASSWORD
+      fi
+      echo "trying to patch"
+      echo "---------------"
+      echo "${SECRET_FIELD_NAME}"
+      echo "---------------"
+      kubectl patch secret $3 -n spinnaker -p "{\"data\": {\"${SECRET_FIELD_NAME}\": \"${ECR_PASSWORD}\"}}"
+    }
+    function updateSecretForReplicaSet {
+      YOUR_LIVE_AWS_ACCOUNT_NAME='ecr-secret-token'
+      YOUR_LIVE_AWS_ACCOUNT_ID='1234567890'
+      YOUR_LIVE_AWS_REGION='us-west-2'
+      REPLICA_SET_NAME=$(kubectl get replicasets -n spinnaker --selector=${1} -o json  | jq -r '.items[] | [.metadata.name] | sort[]' | tail -1);
+      echo replica_set_name
+      echo $REPLICA_SET_NAME;
+      PASSWORD_VOLUME_NAME=$(kubectl get replicaset $REPLICA_SET_NAME -n spinnaker -o json | jq -r \
+        ".spec.template.spec.containers[] | select(.name==\"${2}\") | .volumeMounts[] | select(.mountPath==\"/home/spinnaker/.hal/default/staging/dependencies\") | .name")
+      echo password_volume_name
+      echo $PASSWORD_VOLUME_NAME
+      #setPassword dev ${YOUR_DEV_AWS_ACCOUNT_ID} $PASSWORD_VOLUME_NAME ${YOUR_DEV_AWS_REGION} ${YOUR_DEV_AWS_CROSS_ACCOUNT_ECR_ACCESS_ROLE_ARN}
+      #setPassword stage ${YOUR_STAGE_AWS_ACCOUNT_ID} $PASSWORD_VOLUME_NAME ${YOUR_STAGE_AWS_REGION} ${YOUR_STAGE_AWS_CROSS_ACCOUNT_ECR_ACCESS_ROLE_ARN}
+      setPassword ${YOUR_LIVE_AWS_ACCOUNT_NAME} ${YOUR_LIVE_AWS_ACCOUNT_ID} $PASSWORD_VOLUME_NAME ${YOUR_LIVE_AWS_REGION}
+    }
+    updateSecretForReplicaSet cluster=spin-clouddriver spin-clouddriver
+    updateSecretForReplicaSet load-balancer-spin-clouddriver-bootstrap=true spin-clouddriver-bootstrap
+    #
+    # MANUALLY ADD A SELECTOR ENTRY IN REPLICASET FOR CLOUDDRIVER: 'selector=cluster=spin-clouddriver'
+    #

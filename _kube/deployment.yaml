@@ -1,0 +1,61 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: sharedservices
+  name: halyard
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: halyard
+    spec:
+      terminationGracePeriodSeconds: 10
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+#      initContainers:
+#      - name: volume-permissions
+#        image: busybox
+#        command: ['sh', '-c', 'chown -R 1000:1000 /home/spinnaker/.hal']
+#        volumeMounts:
+#        - name: halyard-pvc
+#          mountPath: /home/spinnaker/.hal
+      containers:
+      - name: halyard
+        image: gcr.io/spinnaker-marketplace/halyard:stable
+        securityContext:
+          privileged: true
+        resources:
+          requests:
+            cpu: 2000m
+            memory: 4Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+        volumeMounts:
+        - name: halyard-pvc
+          mountPath: /home/spinnaker/.hal
+        - name: spinnaker-halyard-volume
+          mountPath: /home/spinnaker/.kube/config
+          subPath: kube_config.yaml
+        - name: spinnaker-halyard-volume
+          mountPath: /home/spinnaker/.hal/config
+          subPath: hal_config.yaml
+        - name: spinnaker-halyard-volume
+          mountPath: /home/spinnaker/.aws/config
+          subPath: aws_config.yaml
+        - name: halyard-ecr-secret-volume
+          mountPath: /tmp/ecr-secret-token
+          subPath: ecr-secret-token
+      volumes:
+      - name: halyard-pvc
+        persistentVolumeClaim:
+          claimName: halyard-pvc
+      - name: spinnaker-halyard-volume
+        configMap:
+          name: spinnaker-halyard
+      - name: halyard-ecr-secret-volume
+        secret:
+          secretName: halyard-ecr-secret
+
