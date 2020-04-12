@@ -139,7 +139,7 @@ deploymentConfigurations:
         omitKinds: []
         customResources: []
         kubeconfigFile: /home/spinnaker/.kube/config
-      - name: qa-dataengr
+      - name: qa-demo
         requiredGroupMembership: []
         providerVersion: V1
         permissions: {}
@@ -151,7 +151,7 @@ deploymentConfigurations:
         context: qa_context
         configureImagePullSecrets: true
         namespaces:
-        - dataengr
+        - demo
         omitNamespaces: []
         kinds: []
         omitKinds: []
@@ -175,7 +175,7 @@ deploymentConfigurations:
         omitKinds: []
         customResources: []
         kubeconfigFile: /home/spinnaker/.kube/config
-      - name: stg-dataengr
+      - name: stg-demo
         requiredGroupMembership: []
         providerVersion: V1
         permissions: {}
@@ -187,7 +187,7 @@ deploymentConfigurations:
         context: prod_context
         configureImagePullSecrets: true
         namespaces:
-        - stg-dataengr
+        - stg-demo
         omitNamespaces: []
         kinds: []
         omitKinds: []
@@ -212,7 +212,7 @@ deploymentConfigurations:
         omitKinds: []
         customResources: []
         kubeconfigFile: /home/spinnaker/.kube/config
-      - name: prod-dataengr
+      - name: prod-demo
         requiredGroupMembership: []
         providerVersion: V1
         permissions: {}
@@ -224,7 +224,7 @@ deploymentConfigurations:
         context: prod_context
         configureImagePullSecrets: true
         namespaces:
-        - dataengr
+        - demo
         - sharedservices
         omitNamespaces: []
         kinds: []
@@ -286,7 +286,7 @@ deploymentConfigurations:
         omitKinds: []
         customResources: []
         kubeconfigFile: /home/spinnaker/.kube/config
-      - name: aws-prod-dataengr
+      - name: aws-prod-demo
         requiredGroupMembership: []
         providerVersion: V1
         permissions: {}
@@ -298,14 +298,14 @@ deploymentConfigurations:
         context: aws_context
         configureImagePullSecrets: true
         namespaces:
-        - dataengr
+        - demo
         - sharedservices
         omitNamespaces: []
         kinds: []
         omitKinds: []
         customResources: []
         kubeconfigFile: /home/spinnaker/.kube/config
-      - name: aws-stg-dataengr
+      - name: aws-stg-demo
         requiredGroupMembership: []
         providerVersion: V1
         permissions: {}
@@ -317,7 +317,7 @@ deploymentConfigurations:
         context: aws_context
         configureImagePullSecrets: true
         namespaces:
-        - stg-dataengr
+        - stg-demo
         - sharedservices
         omitNamespaces: []
         kinds: []
@@ -419,7 +419,7 @@ deploymentConfigurations:
   deploymentEnvironment:
     size: SMALL
     type: Distributed
-    accountName: prod-dataengr
+    accountName: prod-demo
     updateVersions: true
     consul:
       enabled: false

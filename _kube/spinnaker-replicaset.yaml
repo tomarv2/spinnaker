@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  namespace: dataengr
+  namespace: demo
   name: manual-ecr-token-updater
 spec:
   replicas: 1
