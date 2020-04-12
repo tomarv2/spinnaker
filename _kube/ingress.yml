@@ -8,7 +8,7 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
 spec:
   rules:
-  - host: spinnaker.services.tomarv2.com
+  - host: spinnaker.services.demo.com
     http:
       paths:
       - backend:

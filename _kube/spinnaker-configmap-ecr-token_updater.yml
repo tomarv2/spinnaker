@@ -27,7 +27,7 @@ data:
         #SECRET_ACCESS_KEY=$(echo $SESSION | jq -r '.SecretAccessKey');
         #ACCESS_KEY_ID=$(echo $SESSION | jq -r '.AccessKeyId');
         SECRET_ACCESS_KEY="######"; ### PUT RIGHT KEYS
-        ACCESS_KEY_ID="AKIAIC46LOA3XXJL3G4A"; ### PUT RIGHT KEYS
+        ACCESS_KEY_ID="AKIA"; ### PUT RIGHT KEYS
         SESSION_TOKEN=$(echo $SESSION | jq -r '.SessionToken');
         echo session_token
         echo $SESSION_TOKEN

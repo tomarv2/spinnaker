@@ -16,7 +16,7 @@ spec:
           name: ecr-token-updater-script
       containers:
       - name: manual-ecr-token-updater
-        image: tomarv2/devops/aws-jq-kubectl:0.0.1
+        image: demo/devops/aws-jq-kubectl:0.0.1
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:

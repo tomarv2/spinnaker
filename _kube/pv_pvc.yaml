@@ -9,7 +9,7 @@
       "storage": "2Gi"
     },
     "nfs": {
-      "server": "archivevs1.tomarv2.com",
+      "server": "archivevs1.demo.com",
       "path": "/k8s/halyard"
     },
     "accessModes": [

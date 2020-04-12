@@ -10,7 +10,7 @@ spec:
       template:
         spec:
           containers:
-          - image: tomarv2/devops/aws-jq-kubectl:0.0.1
+          - image: demo/devops/aws-jq-kubectl:0.0.1
             name: manual-ecr-token-refresh
             env:
             - name: AWS_DEFAULT_REGION

@@ -54,10 +54,10 @@ deploymentConfigurations:
         - cicd_pipelines
         providerVersion: V1
         permissions: {}
-        address: https://abc.tomarv2.com
+        address: https://abc.demo.com
         username: devops
         password: abc123
-        email: dev.ops@tomarv2.com
+        email: dev.ops@demo.com
         cacheIntervalSeconds: 300
         clientTimeoutMillis: 60000
         cacheThreads: 1
@@ -66,13 +66,13 @@ deploymentConfigurations:
         trackDigests: false
         insecureRegistry: false
         repositories:
-        - tomarv2/jenkins-slave
-        - tomarv2/kafka/base
-        - tomarv2/kafka/broker
-        - tomarv2/kafka/confluent-base
-        - tomarv2/kafka/manager
-        - tomarv2/kafka/mirror
-        - tomarv2/kafka/schema-registry
+        - demo/jenkins-slave
+        - demo/kafka/base
+        - demo/kafka/broker
+        - demo/kafka/confluent-base
+        - demo/kafka/manager
+        - demo/kafka/mirror
+        - demo/kafka/schema-registry
       primaryAccount: dcr-docker-registry
     google:
       enabled: false
@@ -468,8 +468,8 @@ deploymentConfigurations:
       enabled: true
       masters:
       - name: dynamic-jenkins-master
-        address: http://dynamic-jenkins.services.tomarv2.com:80
-        username: dev.ops@tomarv2.com
+        address: http://dynamic-jenkins.services.demo.com:80
+        username: dev.ops@demo.com
         password: abc123
     travis:
       enabled: false
@@ -479,11 +479,11 @@ deploymentConfigurations:
       ssl:
         enabled: false
         keyAlias: spinnaker
-      overrideBaseUrl: http://spin-gate.spinnaker.services.tomarv2.com
+      overrideBaseUrl: http://spin-gate.spinnaker.services.demo.com
     uiSecurity:
       ssl:
         enabled: false
-      overrideBaseUrl: http://spinnaker.services.tomarv2.com
+      overrideBaseUrl: http://spinnaker.services.demo.com
     authn:
       oauth2:
         enabled: false

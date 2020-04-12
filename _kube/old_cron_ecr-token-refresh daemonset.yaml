@@ -14,7 +14,7 @@ spec:
         spec:
           containers:
           - name: ecr-token-updater
-            image: tomarv2/devops/hyperkube:v1.9.3
+            image: demo/devops/hyperkube:v1.9.3
             command:
             - "/bin/sh"
             - "-c"

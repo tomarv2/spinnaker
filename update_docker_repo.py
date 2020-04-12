@@ -2,12 +2,12 @@ import os
 
 cmd_to_run = "" \
 '''hal config provider docker-registry account edit dcr-docker-registry \
-                             --address https://dcr.tomarv2.com \
+                             --address https://dcr.demo.com \
                              --username devops \
                              --cache-interval-seconds 600 \
                              --repositories \
-tomarv2/island,\
-tomarv2/services/config-builder \
+demo/island,\
+demo/services/config-builder \
 --password 
 '''
 

@@ -11,7 +11,7 @@ spec:
         app: manual-ecr-token-updater
     spec:
       containers:
-      - image: tomarv2/devops/aws-jq-kubectl:0.0.1
+      - image: demo/devops/aws-jq-kubectl:0.0.1
         imagePullPolicy: IfNotPresent
         name: ecr-token-refresh
         env:
