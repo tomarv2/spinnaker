@@ -10,4 +10,4 @@ To start with I have been using Spinnaker for nearly 3 years.
 **Run halyard:**
 
 
-docker run --rm -d -v /Users/vtomar/.hal:/root/.hal -v /Users/vtomar/.kube/config:/root/.kube/config -v /Users/vtomar/.aws/config:/root/.aws/config --name halyard gcr.io/spinnaker-marketplace/halyard:1.0.0
+docker run --rm -d -v /Users/demo/.hal:/root/.hal -v /Users/demo/.kube/config:/root/.kube/config -v /Users/demo/.aws/config:/root/.aws/config --name halyard gcr.io/spinnaker-marketplace/halyard:1.0.0

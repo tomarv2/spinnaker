@@ -1,7 +1,7 @@
 apiVersion: v1
 clusters:
 - cluster:
-    certificate-authority: /Users/vtomar/.minikube/ca.crt
+    certificate-authority: /Users/demo/.minikube/ca.crt
     server: https://192.168.99.100:8443
   name: minikube
 contexts:
@@ -16,5 +16,5 @@ users:
 - name: minikube
   user:
     as-user-extra: {}
-    client-certificate: /Users/vtomar/.minikube/client.crt
-    client-key: /Users/vtomar/.minikube/client.key
+    client-certificate: /Users/demo/.minikube/client.crt
+    client-key: /Users/demo/.minikube/client.key
