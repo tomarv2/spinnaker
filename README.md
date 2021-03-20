@@ -17,7 +17,7 @@
   <img width="500" height="250" src="https://files.gitter.im/tomarv2/NiDO/Screen-Shot-2020-04-10-at-4.48.56-PM.png">
 </p>
 
-:wave: Spinnaker is a centrally run product which is used to deploy continuously as development happens. 
+:wave: **Spinnaker** is a centrally run product which is used to deploy continuously as development happens. 
 
 You'll find 4 different references:
 
@@ -26,13 +26,15 @@ You'll find 4 different references:
 3. Promote to Staging, uses Deploy from Cluster (triggered by #2)
 4. Promote to Prod, uses Deploy from Cluster (manually trigger)
 
-## Run halyard:
+#### [Run halyard](https://spinnaker.io/setup/install/halyard/):
 
 ```
-docker run --rm -d -v /Users/demo/.hal:/root/.hal -v /Users/demo/.kube/config:/root/.kube/config -v /Users/demo/.aws/config:/root/.aws/config --name halyard gcr.io/spinnaker-marketplace/halyard:1.0.0
+docker run --rm -d -v .hal:/root/.hal -v .kube/config:/root/.kube/config \
+    -v .aws/config:/root/.aws/config --name halyard gcr.io/spinnaker-marketplace/halyard:1.0.0
 ```
 
 ### References:
 
+- https://spinnaker.io/setup/install/
 - https://www.spinnaker.io/guides/tutorials/codelabs/hello-deployment/
 - https://www.opsmx.com/blog/continuous-deployment-to-kubernetes-using-github-triggered-spinnaker-pipelines/
