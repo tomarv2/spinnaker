@@ -14,7 +14,7 @@
 # Spinnaker + Jenkins
 
 <p align="center">
-  <img width="500" height="300" src="https://files.gitter.im/tomarv2/NiDO/Screen-Shot-2020-04-10-at-4.48.56-PM.png">
+  <img width="500" height="250" src="https://files.gitter.im/tomarv2/NiDO/Screen-Shot-2020-04-10-at-4.48.56-PM.png">
 </p>
 
 :wave: Spinnaker is a centrally run product which is used to deploy continuously as development happens. 
